@@ -16,9 +16,25 @@ class App extends React.Component {
     .then(res => {
       console.log('GitHub Data: ', res)
       this.setState({ users: [...this.state.users, res.data] })
-      console.log(this.state.users)
+      console.log('First State update: ', this.state.users)
     });
   };
+
+  componentDidUpdate(prevProps, prevState) {
+    console.log('CDU Invoked')
+    if(this.state.users.length === 1){
+      axios.get('https://api.github.com/users/tygedavis/followers')
+      .then(res => {
+        console.log('Followers results: ', res.data)
+        res.data.forEach(element => {
+          //console.log(element)
+          
+          this.setState({ users: [...this.state.users, element]})
+          console.log('Folowers State update: ',this.state.users)
+        })
+      });
+    }
+  }
 
   render() {
     return (
@@ -29,9 +45,10 @@ class App extends React.Component {
           {this.state.users.map(user => 
             <div key={user.id}>
               <h2>{user.name}</h2>
-              <p>Bio: {user.bio}</p>
-              <p>Followers: {user.followers}</p>
-              <p>Following: {user.following}</p>
+              <p>{user.bio}</p>
+              <p>{user.followers}</p>
+              <p>{user.following}</p>
+              <h3>{user.login}</h3>
             </div>
           )}  
         </div>
